@@ -1,11 +1,11 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from config import ADMIN_IDS
-from keyboards.admin import admin_menu_kb
-from utils.token_utils import generate_token, get_token_expiry
-from database import get_session
-from models.token import Token
+from src.config import ADMIN_IDS
+from src.keyboards.admin import admin_menu_kb
+from src.utils.token_utils import generate_token, get_token_expiry
+from src.database import get_session
+from src.models.token import Token
 from sqlalchemy import select
 
 admin_router = Router()
