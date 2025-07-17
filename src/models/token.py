@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from src.database import Base
+from src.models.user import User
 
 class Token(Base):
     __tablename__ = "tokens"
@@ -11,4 +12,4 @@ class Token(Base):
     is_used = Column(Boolean, default=False)
     expires_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    user = relationship("User", back_populates="tokens")
+    user = relationship(User, back_populates="tokens")
