@@ -4,6 +4,8 @@ from aiogram.client.default import DefaultBotProperties
 from src.config import BOT_TOKEN
 from src.handlers.admin import admin_router
 from src.handlers.user import user_router
+from src.handlers.join_request import join_request_router
+from src.handlers.admin_join_approval import admin_join_approval_router
 
 async def main():
     bot = Bot(
@@ -13,6 +15,8 @@ async def main():
     dp = Dispatcher()
     dp.include_router(admin_router)
     dp.include_router(user_router)
+    dp.include_router(join_request_router)
+    dp.include_router(admin_join_approval_router)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
