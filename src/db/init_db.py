@@ -1,21 +1,10 @@
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, BigInteger, Boolean, DateTime
-import datetime
+from src.db.models import Base, User
+from src.models.token import Token
 import os
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:pass@localhost:5432/mydb")
-
-Base = declarative_base()
-
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
-    telegram_id = Column(BigInteger, unique=True, nullable=False)
-    is_vip = Column(Boolean, default=False)
-    vip_expiry = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 async def init_db():
     """
