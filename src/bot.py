@@ -1,9 +1,9 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from config import BOT_TOKEN
-from handlers.admin import admin_router
-from handlers.user import user_router
+from src.config import BOT_TOKEN
+from src.handlers.admin import admin_router
+from src.handlers.user import user_router
 
 async def main():
     bot = Bot(
