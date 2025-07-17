@@ -1,11 +1,11 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
-from keyboards.user import user_menu_kb
-from database import get_session
-from models.token import Token
-from models.user import User
-from config import FREE_CHANNEL_ID
+from src.keyboards.user import user_menu_kb
+from src.database import get_session
+from src.models.token import Token
+from src.models.user import User
+from src.config import FREE_CHANNEL_ID
 from sqlalchemy import select
 from datetime import datetime
 
