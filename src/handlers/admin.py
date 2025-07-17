@@ -1,12 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from ..config import ADMIN_IDS
-from ..keyboards.admin import admin_menu_kb
-from ..utils.token_utils import generate_token, get_token_expiry
-from ..database import get_session
-from ..models.token import Token
-from sqlalchemy.future import select
+from config import ADMIN_IDS
+from keyboards.admin import admin_menu_kb
+from utils.token_utils import generate_token, get_token_expiry
+from database import get_session
+from models.token import Token
+from sqlalchemy import select
 
 admin_router = Router()
 
@@ -28,6 +28,8 @@ async def generate_free_token_handler(callback: CallbackQuery):
         token = Token(token=token_str, expires_at=expires_at)
         session.add(token)
         await session.commit()
-    link = f"https://t.me/{callback.bot.me.username}?start={token_str}"
+    bot_username = (await callback.bot.me()).username
+    link = f"https://t.me/{bot_username}?start={token_str}"
     await callback.message.answer(f"Token generado:\n{link}\nVálido por 24h.")
     await callback.answer()
+    
