@@ -12,8 +12,11 @@ from datetime import datetime
 user_router = Router()
 
 @user_router.message(CommandStart())
-async def start(message: Message, command: CommandStart.CommandObject):
-    token = command.args
+async def start(message: Message):
+    # Extraer el token de los argumentos del comando /start
+    args = message.text.split(maxsplit=1)
+    token = args[1] if len(args) > 1 else None
+
     if token:
         async for session in get_session():
             result = await session.execute(select(Token).where(Token.token == token, Token.is_used == False))
@@ -43,7 +46,7 @@ async def check_vip_status(message: Message):
     async for session in get_session():
         result = await session.execute(select(User).where(User.telegram_id == message.from_user.id))
         user = result.scalar_one_or_none()
-        if user and user.is_vip and user.vip_.expiry and user.vip_expiry > datetime.utcnow():
+        if user and user.is_vip and user.vip_expiry and user.vip_expiry > datetime.utcnow():
             await message.answer(f"Eres VIP hasta {user.vip_expiry.strftime('%Y-%m-%d %H:%M:%S')}")
         else:
             await message.answer("No tienes suscripción VIP activa.")
