@@ -1,12 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart
-from ..keyboards.user import user_menu_kb
-from ..database import get_session
-from ..models.token import Token
-from ..models.user import User
-from ..config import FREE_CHANNEL_ID, VIP_CHANNEL_ID
-from sqlalchemy.future import select
+from keyboards.user import user_menu_kb
+from database import get_session
+from models.token import Token
+from models.user import User
+from config import FREE_CHANNEL_ID
+from sqlalchemy import select
 from datetime import datetime
 
 user_router = Router()
@@ -50,3 +50,4 @@ async def check_vip_status(message: Message):
             await message.answer(f"Eres VIP hasta {user.vip_expiry.strftime('%Y-%m-%d %H:%M:%S')}")
         else:
             await message.answer("No tienes suscripción VIP activa.")
+            
