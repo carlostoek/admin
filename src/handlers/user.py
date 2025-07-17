@@ -11,7 +11,7 @@ from datetime import datetime
 
 user_router = Router()
 
- @user_router.message(CommandStart())
+@user_router.message(CommandStart())
 async def start(message: Message, command: CommandStart.CommandObject):
     token = command.args
     if token:
@@ -34,16 +34,16 @@ async def start(message: Message, command: CommandStart.CommandObject):
                 return
     await message.answer("Bienvenido. Usa el menú para interactuar.", reply_markup=user_menu_kb())
 
- @user_router.message(F.text == "Solicitar acceso canal gratis")
+@user_router.message(F.text == "Solicitar acceso canal gratis")
 async def request_free_channel(message: Message):
     await message.answer("Solicita un token a un administrador para acceder al canal gratuito.")
 
- @user_router.message(F.text == "Ver estado VIP")
+@user_router.message(F.text == "Ver estado VIP")
 async def check_vip_status(message: Message):
     async for session in get_session():
         result = await session.execute(select(User).where(User.telegram_id == message.from_user.id))
         user = result.scalar_one_or_none()
-        if user and user.is_vip and user.vip_expiry and user.vip_expiry > datetime.utcnow():
+        if user and user.is_vip and user.vip_.expiry and user.vip_expiry > datetime.utcnow():
             await message.answer(f"Eres VIP hasta {user.vip_expiry.strftime('%Y-%m-%d %H:%M:%S')}")
         else:
             await message.answer("No tienes suscripción VIP activa.")
