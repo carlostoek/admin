@@ -3,6 +3,7 @@
 
 from aiogram import Router, types, F
 from aiogram.filters import CommandStart
+from aiogram.filters import Command
 from database import get_token, use_token, add_user, update_user_role
 from config import settings
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
