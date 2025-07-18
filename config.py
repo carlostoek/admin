@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, validator
-
+from pydantic import validator
 load_dotenv()
 
 class Settings(BaseSettings):
