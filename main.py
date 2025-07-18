@@ -1,12 +1,12 @@
 # main.py
-# Punto de entrada del bot de Telegram para gestión de canales VIP y gratuitos
-
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher
+from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from config import settings
+from database import init_db
 from handlers import vip, free, common
 from middlewares.logging import LoggingMiddleware
 from utils.scheduler import start_scheduler
@@ -17,7 +17,15 @@ logging.basicConfig(
 )
 
 async def main():
-    bot = Bot(token=settings.BOT_TOKEN, parse_mode=ParseMode.HTML)
+    # Inicializar base de datos primero
+    await init_db()
+    
+    # Configuración moderna del bot
+    bot = Bot(
+        token=settings.BOT_TOKEN,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+    )
+    
     dp = Dispatcher(storage=MemoryStorage())
     dp.update.middleware(LoggingMiddleware())
 
@@ -26,8 +34,7 @@ async def main():
     dp.include_router(free.router)
 
     await start_scheduler(bot)
-
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main())9
