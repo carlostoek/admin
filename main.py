@@ -29,7 +29,7 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     dp.update.middleware(LoggingMiddleware())
 
-    dp.include_router(free.router)
+    dp.include_router(free_router.router)
     dp.include_router(common.router)
     dp.include_router(vip.router)
     
