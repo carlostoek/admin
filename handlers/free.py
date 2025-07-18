@@ -7,7 +7,6 @@ from config import settings
 from database import add_user, get_user
 from utils.scheduler import schedule_free_acceptance
 
-# Cambiar a free_router para mantener consistencia
 free_router = Router(name="free_router")
 
 @free_router.message(Command("free"))
@@ -16,7 +15,7 @@ async def request_free_access(message: types.Message):
         user = await get_user(message.from_user.id)
         
         if user:
-            if user[3] in ['FREE', 'FREE_PENDING']:  # user[3] es el campo 'role'
+            if user[3] in ['FREE', 'FREE_PENDING']:
                 await message.answer("🔄 Ya tienes una solicitud de acceso en proceso.")
                 return
             elif user[3] == 'VIP':
@@ -33,15 +32,20 @@ async def request_free_access(message: types.Message):
             await message.answer("❌ Error al registrar tu solicitud. Intenta nuevamente.")
             return
 
+        # Teclado inline corregido - solo botones con callback_data o URL
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(
-                text="✅ Solicitar acceso", 
-                callback_data="request_free"
-            )],
-            [InlineKeyboardButton(
-                text="📜 Ver reglas",
-                url=settings.FREE_CHANNEL_RULES_URL
-            )]
+            [
+                InlineKeyboardButton(
+                    text="✅ Solicitar acceso", 
+                    callback_data="request_free"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="📜 Ver reglas",
+                    url=settings.FREE_CHANNEL_RULES_URL
+                )
+            ]
         ])
 
         await message.answer(
