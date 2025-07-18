@@ -69,17 +69,15 @@ async def add_user(telegram_id: int, username: str, role: str, vip_expiry=None) 
         logger.error(f"Error al añadir/actualizar usuario: {e}")
         return False
 
-async def get_user(telegram_id: int) -> Optional[dict]:
-    """Obtiene un usuario como diccionario con las claves correctas"""
+async def get_user(telegram_id: int) -> Optional[tuple]:
+    """Obtiene un usuario como tupla (id, telegram_id, username, role, vip_expiry, created_at)"""
     try:
         async with aiosqlite.connect(DB_PATH) as db:
-            db.row_factory = aiosqlite.Row  # Esto hace que los resultados sean diccionarios
             async with db.execute(
                 "SELECT id, telegram_id, username, role, vip_expiry, created_at FROM users WHERE telegram_id = ?",
                 (telegram_id,)
             ) as cursor:
-                row = await cursor.fetchone()
-                return dict(row) if row else None
+                return await cursor.fetchone()
     except Exception as e:
         logger.error(f"Error al obtener usuario {telegram_id}: {e}")
         return None
