@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings, validator
+from pydantic_settings import BaseSettings
 from pydantic import validator
 load_dotenv()
 
