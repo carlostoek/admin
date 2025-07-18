@@ -32,18 +32,18 @@ async def request_free_access(message: types.Message):
             await message.answer("❌ Error al registrar tu solicitud. Intenta nuevamente.")
             return
 
-        # Teclado inline corregido - solo botones con callback_data o URL
+        # Teclado inline CORREGIDO - asegurando que todos los botones tienen callback_data o url
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
                 InlineKeyboardButton(
                     text="✅ Solicitar acceso", 
-                    callback_data="request_free"
+                    callback_data="request_free_access"  # Asegurar callback_data válido
                 )
             ],
             [
                 InlineKeyboardButton(
                     text="📜 Ver reglas",
-                    url=settings.FREE_CHANNEL_RULES_URL
+                    url=settings.FREE_CHANNEL_RULES_URL or "https://t.me/example"  # URL de respaldo
                 )
             ]
         ])
@@ -60,7 +60,7 @@ async def request_free_access(message: types.Message):
         logging.error(f"Error en comando /free: {str(e)}", exc_info=True)
         await message.answer("❌ Ocurrió un error al procesar tu solicitud. Intenta nuevamente.")
 
-@free_router.callback_query(F.data == "request_free")
+@free_router.callback_query(F.data == "request_free_access")
 async def process_free_request(callback: types.CallbackQuery):
     try:
         user = await get_user(callback.from_user.id)
