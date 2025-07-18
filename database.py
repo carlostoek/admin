@@ -2,6 +2,9 @@ import aiosqlite
 import logging
 from config import settings
 from pathlib import Path
+from typing import Optional, List
+
+logger = logging.getLogger(__name__)
 
 DB_PATH = Path(settings.DATABASE_URL)
 
@@ -48,19 +51,38 @@ async def init_db():
         logging.error(f"Error al inicializar DB: {e}")
         raise
 
-async def add_user(telegram_id, username, role, vip_expiry=None):
-    from time import time
-    async with aiosqlite.connect(DB_PATH) as db:
-        await db.execute(
-            "INSERT OR REPLACE INTO users (telegram_id, username, role, vip_expiry, created_at) VALUES (?, ?, ?, ?, ?)",
-            (telegram_id, username, role, vip_expiry, int(time()))
-        )
-        await db.commit()
+async def add_user(telegram_id: int, username: str, role: str, vip_expiry=None) -> bool:
+    try:
+        async with aiosqlite.connect(DB_PATH) as db:
+            await db.execute(
+                """INSERT INTO users (telegram_id, username, role, vip_expiry)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(telegram_id) DO UPDATE SET
+                    username = excluded.username,
+                    role = excluded.role,
+                    vip_expiry = excluded.vip_expiry""",
+                (telegram_id, username, role, vip_expiry)
+            )
+            await db.commit()
+            return True
+    except Exception as e:
+        logger.error(f"Error al añadir/actualizar usuario: {e}")
+        return False
 
-async def get_user(telegram_id):
-    async with aiosqlite.connect(DB_PATH) as db:
-        async with db.execute("SELECT * FROM users WHERE telegram_id = ?", (telegram_id,)) as cursor:
-            return await cursor.fetchone()
+async def get_user(telegram_id: int) -> Optional[dict]:
+    """Obtiene un usuario y retorna un diccionario"""
+    try:
+        async with aiosqlite.connect(DB_PATH) as db:
+            db.row_factory = aiosqlite.Row  # Esto hace que los resultados sean diccionarios
+            async with db.execute(
+                "SELECT * FROM users WHERE telegram_id = ?",
+                (telegram_id,)
+            ) as cursor:
+                row = await cursor.fetchone()
+                return dict(row) if row else None
+    except Exception as e:
+        logger.error(f"Error al obtener usuario {telegram_id}: {e}")
+        return None
 
 async def update_user_role(telegram_id, role, vip_expiry=None):
     async with aiosqlite.connect(DB_PATH) as db:
@@ -70,10 +92,19 @@ async def update_user_role(telegram_id, role, vip_expiry=None):
         )
         await db.commit()
 
-async def get_vip_users():
-    async with aiosqlite.connect(DB_PATH) as db:
-        async with db.execute("SELECT * FROM users WHERE role = 'VIP'",) as cursor:
-            return await cursor.fetchall()
+async def get_vip_users() -> List[dict]:
+    """Obtiene usuarios VIP como diccionarios"""
+    try:
+        async with aiosqlite.connect(DB_PATH) as db:
+            db.row_factory = aiosqlite.Row
+            async with db.execute(
+                "SELECT * FROM users WHERE role = 'VIP'"
+            ) as cursor:
+                rows = await cursor.fetchall()
+                return [dict(row) for row in rows]
+    except Exception as e:
+        logger.error(f"Error al obtener usuarios VIP: {e}")
+        return []
 
 async def add_token(token, name, price, duration, created_by):
     from time import time
