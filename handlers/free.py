@@ -7,9 +7,10 @@ from config import settings
 from database import add_user, get_user
 from utils.scheduler import schedule_free_acceptance
 
-router = Router()
+# Cambiar a free_router para mantener consistencia
+free_router = Router(name="free_router")
 
-@router.message(Command("free"))
+@free_router.message(Command("free"))
 async def request_free_access(message: types.Message):
     try:
         user = await get_user(message.from_user.id)
@@ -55,11 +56,11 @@ async def request_free_access(message: types.Message):
         logging.error(f"Error en comando /free: {str(e)}", exc_info=True)
         await message.answer("❌ Ocurrió un error al procesar tu solicitud. Intenta nuevamente.")
 
-@router.callback_query(F.data == "request_free")
+@free_router.callback_query(F.data == "request_free")
 async def process_free_request(callback: types.CallbackQuery):
     try:
         user = await get_user(callback.from_user.id)
-        if not user or user[3] != 'FREE_PENDING':  # user[3] es el campo 'role'
+        if not user or user[3] != 'FREE_PENDING':
             await callback.answer("⚠️ Primero usa el comando /free", show_alert=True)
             return
 
