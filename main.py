@@ -10,7 +10,7 @@ from database import init_db
 from handlers import vip, free, common
 from middlewares.logging import LoggingMiddleware
 from utils.scheduler import start_scheduler
-from handlers.free import free_router  # Importar el router específico
+from handlers.free import free  # Importar el router específico
 
 logging.basicConfig(
     level=logging.INFO,
