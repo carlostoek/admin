@@ -7,9 +7,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 from config import settings
 from database import init_db
-from handlers import vip, free_router, common
+from handlers import vip, common
 from middlewares.logging import LoggingMiddleware
 from utils.scheduler import start_scheduler
+from handlers.free import free_router  # Importar el router específico
 
 logging.basicConfig(
     level=logging.INFO,
