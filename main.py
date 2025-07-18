@@ -10,6 +10,7 @@ from database import init_db
 from handlers import vip, free, common
 from middlewares.logging import LoggingMiddleware
 from utils.scheduler import start_scheduler
+from handlers.free import free_router  # Importar el router específico
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,9 +30,10 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     dp.update.middleware(LoggingMiddleware())
 
+    dp.include_router(free.router)
     dp.include_router(common.router)
     dp.include_router(vip.router)
-    dp.include_router(free.router)
+    
 
     await start_scheduler(bot)
     await dp.start_polling(bot)
