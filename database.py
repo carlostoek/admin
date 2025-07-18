@@ -70,12 +70,12 @@ async def add_user(telegram_id: int, username: str, role: str, vip_expiry=None) 
         return False
 
 async def get_user(telegram_id: int) -> Optional[dict]:
-    """Obtiene un usuario y retorna un diccionario"""
+    """Obtiene un usuario como diccionario con las claves correctas"""
     try:
         async with aiosqlite.connect(DB_PATH) as db:
             db.row_factory = aiosqlite.Row  # Esto hace que los resultados sean diccionarios
             async with db.execute(
-                "SELECT * FROM users WHERE telegram_id = ?",
+                "SELECT id, telegram_id, username, role, vip_expiry, created_at FROM users WHERE telegram_id = ?",
                 (telegram_id,)
             ) as cursor:
                 row = await cursor.fetchone()
